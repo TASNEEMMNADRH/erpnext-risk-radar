@@ -293,18 +293,15 @@ def get_low_stock_items(
     item_code: str = None
 ):
     """
-Fetch low stock items from Bin ONLY for:
-- Finished Goods - SD
-- Stores - SD
+    Fetch low stock items from Bin for Finished Goods - SD and Stores - SD warehouses.
 
-Risk levels:
-- High: actual_qty < 30 (including negative quantities)
-- Medium: 30 <= actual_qty < 60
-- Ignored: actual_qty >= 60
+    Risk levels:
+    - High: actual_qty < 30
+    - Medium: 30 <= actual_qty < 60
+    - Ignored: actual_qty >= 60
 
-Returns:
-  Only Medium/High risk items, sorted by actual_qty ascending,
-  filtered to warehouses: Finished Goods - SD and Stores - SD.
+    Returns:
+      Only Medium/High risk items, sorted by actual_qty ascending.
     """
     if not ERP_URL:
         raise ValueError("Missing ERP_URL in .env")
@@ -320,7 +317,7 @@ Returns:
 
     filters = []
 
-    # ✅ If warehouse is provided, allow only if it's in allowed list
+    # Filter by warehouse - only allowed warehouses
     if warehouse:
         if warehouse not in ALLOWED_WAREHOUSES:
             return {
@@ -331,7 +328,6 @@ Returns:
             }
         filters.append(["warehouse", "=", warehouse])
     else:
-        # ✅ Only show these 2 warehouses
         filters.append(["warehouse", "in", ALLOWED_WAREHOUSES])
 
     if item_code:
@@ -358,18 +354,15 @@ Returns:
     for entry in raw_data:
         qty = entry.get("actual_qty", 0) or 0
 
-        # ✅ High for qty < 0 (negative stock only)
-        if qty < 0:
+        # Risk classification based on actual_qty
+        if qty < 30:
             risk_level = "High"
             high_count += 1
-
-        # ✅ Medium for 30 <= qty <= 60
-        elif 30 <= qty <= 60:
+        elif 30 <= qty < 60:
             risk_level = "Medium"
             medium_count += 1
-
         else:
-            # Ignore qty 0-29 and qty > 60
+            # Ignore qty >= 60
             continue
 
         result.append({
@@ -379,7 +372,7 @@ Returns:
             "risk_level": risk_level
         })
 
-    # Sort: lowest qty first (negatives at top)
+    # Sort by lowest qty first
     result.sort(key=lambda x: x["actual_qty"])
 
     # Return top 50 results
