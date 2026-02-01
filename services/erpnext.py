@@ -298,9 +298,9 @@ Fetch low stock items from Bin ONLY for:
 - Stores - SD
 
 Risk levels:
-- High: actual_qty < 30 (including negative quantities)
-- Medium: 30 <= actual_qty < 60
-- Ignored: actual_qty >= 60
+- High: actual_qty < 30 
+- Medium: 30 <= actual_qty <= 60
+- Ignored: actual_qty > 60
 
 Returns:
   Only Medium/High risk items, sorted by actual_qty ascending,
@@ -358,18 +358,18 @@ Returns:
     for entry in raw_data:
         qty = entry.get("actual_qty", 0) or 0
 
-        # ✅ High for qty < 0 (negative stock only)
-        if qty < 0:
+        # High for 0 <= qty < 30
+        if   0<= qty <=29 :
             risk_level = "High"
             high_count += 1
 
-        # ✅ Medium for 30 <= qty <= 60
+        # Medium for 30 <= qty <= 60
         elif 30 <= qty <= 60:
             risk_level = "Medium"
             medium_count += 1
 
         else:
-            # Ignore qty 0-29 and qty > 60
+            # Ignore qty > 60
             continue
 
         result.append({

@@ -46,8 +46,9 @@ def invoices(limit: int = 50):
 def overdue_invoices(
     limit: int = Query(50, description="Max number of invoices to return"),
     customer: str = Query(None, description="Filter by customer name"),
-    days_medium_max: int = Query(7, description="Max days for Medium risk (default 7)"),
-    days_high_min: int = Query(8, description="Min days for High risk (default 8)")
+    days_medium_min: int = Query(8, description="Min days for Medium risk"),
+    days_medium_max: int = Query(14, description="Max days for Medium risk"),
+    days_high_min: int = Query(15, description="Min days for High risk")
 ):
     """
     Fetch overdue Sales Invoices with risk scoring.
@@ -55,13 +56,14 @@ def overdue_invoices(
     Overdue = due_date < today AND status != Paid AND outstanding > 0
     
     Risk levels:
-    - Medium: 1 to days_medium_max days overdue
-    - High: >= days_high_min days overdue
+    - Medium: 8 to 14 days overdue
+    - High: >= 15 days overdue
     """
     try:
         return get_overdue_invoices(
             limit=limit,
             customer=customer,
+            days_medium_min=days_medium_min,
             days_medium_max=days_medium_max,
             days_high_min=days_high_min
         )
@@ -172,6 +174,11 @@ def delayed_purchase_orders(
         raise HTTPException(status_code=502, detail="Cannot connect to ERPNext")
 
 
-if __name__ == "__main__":
+
+if __name__ == "__main__":  # pragma: no cover
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8082)
+
+
+
+    

@@ -21,7 +21,7 @@ def dashboard():
     return FileResponse(os.path.join(static_dir, "dashboard.html"))
 
 
-@app.get("/api/health")
+@app.get("/health")
 def health():
     return {"status": "ok"}
 
