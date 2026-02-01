@@ -320,7 +320,7 @@ Returns:
 
     filters = []
 
-    # ✅ If warehouse is provided, allow only if it's in allowed list
+    # Filter by warehouse - only allowed warehouses
     if warehouse:
         if warehouse not in ALLOWED_WAREHOUSES:
             return {
@@ -331,7 +331,6 @@ Returns:
             }
         filters.append(["warehouse", "=", warehouse])
     else:
-        # ✅ Only show these 2 warehouses
         filters.append(["warehouse", "in", ALLOWED_WAREHOUSES])
 
     if item_code:
@@ -367,7 +366,6 @@ Returns:
         elif 30 <= qty <= 60:
             risk_level = "Medium"
             medium_count += 1
-
         else:
             # Ignore qty > 60
             continue
@@ -379,7 +377,7 @@ Returns:
             "risk_level": risk_level
         })
 
-    # Sort: lowest qty first (negatives at top)
+    # Sort by lowest qty first
     result.sort(key=lambda x: x["actual_qty"])
 
     # Return top 50 results
