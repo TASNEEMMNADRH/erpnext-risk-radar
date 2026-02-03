@@ -23,7 +23,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install coverage
 
       - name: Run unit tests + coverage
         run: |
@@ -35,29 +34,21 @@ jobs:
     name: Integration Tests (ERPNext)
     runs-on: ubuntu-latest
 
-    env:
-      ERP_URL: http://localhost:8080
-      ERP_API_KEY: admin
-      ERP_API_SECRET: admin
-
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v3
 
-      - name: Start ERPNext
-        run: docker compose up -d erpnext
+      # 🔹 מרימים את כל השירותים (ERPNext + MariaDB)
+      - name: Start services
+        run: docker compose up -d
 
+      # 🔹 מחכים ש-ERPNext באמת יהיה מוכן
       - name: Wait for ERPNext
         run: |
           echo "Waiting for ERPNext..."
-          for i in {1..30}; do
+          for i in {1..60}; do
             curl -s http://localhost:8080/api/method/ping && break
             sleep 10
           done
 
-      - name: Run integration tests
-        run: docker compose run --rm tests
-
-      - name: Stop containers
-        if: always()
-        run: docker compose down
+      # 🔹 מריצים את הטסטים בקונטיינר tests
