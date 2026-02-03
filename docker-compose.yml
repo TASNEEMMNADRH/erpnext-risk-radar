@@ -14,6 +14,11 @@ services:
       - .:/app
     depends_on:
       - erpnext
+    environment:
+      ERP_URL: http://erpnext:8080
+      ERP_API_KEY: admin
+      ERP_API_SECRET: admin
+      PYTHONPATH: /app
     command: >
       bash -c "
       pip install -r requirements.txt &&
