@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  mariadb:
+    image: mariadb:10.6
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: erpnext
+      MYSQL_USER: erp
+      MYSQL_PASSWORD: erp
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  erpnext:
+    image: frappe/erpnext:v14
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      DB_HOST: mariadb
+      MYSQL_ROOT_PASSWORD: root
+      ADMIN_PASSWORD: admin
+      SITE_NAME: test.localhost
+    ports:
+      - "8080:8080"

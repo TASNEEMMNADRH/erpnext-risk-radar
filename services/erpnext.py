@@ -21,6 +21,7 @@ def get_headers():
 
 
 def get_sales_invoices(limit: int = 50):
+    
     """
     Fetch Sales Invoices from ERPNext.
     
