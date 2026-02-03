@@ -1,4 +1,4 @@
-name: Tests
+name: CI (Tests + Integration)
 
 on:
   push:
@@ -7,19 +7,14 @@ on:
     branches: [main]
 
 jobs:
-  # ======================
-  # API / UNIT TESTS
-  # ======================
-  api-tests:
+  unit-tests:
     name: API & Unit Tests
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -30,35 +25,39 @@ jobs:
           pip install -r requirements.txt
           pip install coverage
 
-      - name: Run API / Unit tests
-        run: |
-          python -m unittest discover -s backend/test -p "test_*.py" -v
-
-      - name: Run coverage
+      - name: Run unit tests + coverage
         run: |
           coverage run -m unittest discover -s backend/test -p "test_*.py"
           coverage report -m
 
 
-  # ======================
-  # INTEGRATION TESTS
-  # ======================
   integration-tests:
     name: Integration Tests (ERPNext)
     runs-on: ubuntu-latest
 
+    env:
+      ERP_URL: http://localhost:8080
+      ERP_API_KEY: admin
+      ERP_API_SECRET: admin
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - uses: docker/setup-buildx-action@v3
 
-      - name: Create .env for integration tests
+      - name: Start ERPNext
+        run: docker compose up -d erpnext
+
+      - name: Wait for ERPNext
         run: |
-          echo "ERP_URL=${{ secrets.ERP_URL }}" >> .env
-          echo "ERP_API_KEY=${{ secrets.ERP_API_KEY }}" >> .env
-          echo "ERP_API_SECRET=${{ secrets.ERP_API_SECRET }}" >> .env
-
-      - name: Build Docker image
-        run: docker compose build
+          echo "Waiting for ERPNext..."
+          for i in {1..30}; do
+            curl -s http://localhost:8080/api/method/ping && break
+            sleep 10
+          done
 
       - name: Run integration tests
         run: docker compose run --rm tests
+
+      - name: Stop containers
+        if: always()
+        run: docker compose down

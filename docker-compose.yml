@@ -17,5 +17,5 @@ services:
     command: >
       bash -c "
       pip install -r requirements.txt &&
-      pytest --cov
+      pytest backend/test --cov=backend --cov-report=term
       "
