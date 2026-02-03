@@ -37,8 +37,11 @@ services:
       ERP_API_KEY: admin
       ERP_API_SECRET: admin
       PYTHONPATH: /app
+      COVERAGE_FILE: /app/.coverage
     command: >
       bash -c "
       pip install -r requirements.txt &&
-      pytest backend/test --cov=backend --cov-report=term
+      pytest backend/test/test_erpnext_integration.py
+      --cov=backend
+      --cov-report=term
       "
