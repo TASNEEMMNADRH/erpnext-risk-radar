@@ -19,21 +19,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
+      - name: Start ERPNext
+        run: docker compose up -d erpnext
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Start ERPNext with Docker
-        run: |
-          docker compose -f docker-compose.ci.yml up -d
-
-      - name: Wait for ERPNext to be ready
+      - name: Wait for ERPNext
         run: |
           echo "Waiting for ERPNext..."
           for i in {1..30}; do
@@ -42,9 +31,8 @@ jobs:
           done
 
       - name: Run integration tests
-        run: |
-          pytest backend/test -v
+        run: docker compose run --rm tests
 
       - name: Stop containers
         if: always()
-        run: docker compose -f docker-compose.yml down
+        run: docker compose down
