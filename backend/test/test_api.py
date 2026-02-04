@@ -708,7 +708,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 502)
         json_data = response.json()
         self.assertIn("detail", json_data)
-        self.assertEqual(json_data["detail"], "Cannot  connect to ERPNext")
+        self.assertEqual(json_data["detail"], "Cannot connect to ERPNext")
         
         # Verify the service function was invoked
         mock_get_delayed_purchase_orders.assert_called_once_with(limit=25)
