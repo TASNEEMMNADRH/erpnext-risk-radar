@@ -83,7 +83,7 @@ def test_get_bin_stock_real():
         assert "item_code" in item
         assert "total_qty" in item
 
-        # ERPNext allows negative stock  →  just validate type
+        # ERPNext allows negative stock → just validate type
         assert isinstance(item["total_qty"], (int, float))
 
         assert "warehouses" in item
