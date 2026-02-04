@@ -30,6 +30,7 @@ jobs:
           coverage report -m
 
 
+
   integration-tests:
     name: Integration Tests (ERPNext)
     runs-on: ubuntu-latest
@@ -50,4 +51,3 @@ jobs:
             curl -s http://localhost:8080/api/method/ping && break
             sleep 10
           done
-
