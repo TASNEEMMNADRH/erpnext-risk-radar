@@ -31,10 +31,6 @@ jobs:
 
 
 
-
-
-
-
   integration-tests:
     name: Integration Tests (ERPNext)
     runs-on: ubuntu-latest
