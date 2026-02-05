@@ -208,9 +208,10 @@ class TestDashboardFilters(unittest.TestCase):
         cls.playwright = sync_playwright().start()
 
         cls.browser = cls.playwright.chromium.launch(
-            headless=True,
-            args=["--no-sandbox"]
-        )
+        headless=False,          # פותח דפדפן אמיתי
+        args=["--no-sandbox"]
+    )
+
 
         cls.context = cls.browser.new_context(
             extra_http_headers={
@@ -318,36 +319,38 @@ class TestDashboardFilters(unittest.TestCase):
 
         self.dashboard.assert_all_stock_qty_between(20, 60)
 
-    def test_08_stock_filter_by_warehouse_and_quantity(self):
-        self.dashboard.open_stock_filter()
 
-        self.page.wait_for_function(
-            "() => document.getElementById('stock-warehouse').options.length > 1",
-            timeout=10000
-        )
 
-        warehouse = (
-            self.dashboard.stock_warehouse
-            .locator("option")
-            .nth(1)
-            .get_attribute("value")
-        )
-
-        self.dashboard.stock_warehouse.select_option(value=warehouse)
-        self.dashboard.stock_qty_min.fill("20")
-        self.dashboard.stock_qty_max.fill("60")
-        self.dashboard.apply_stock_filters()
-
-        self.dashboard.assert_all_stock_from_warehouse(warehouse)
-        self.dashboard.assert_all_stock_qty_between(20, 60)
-
-    def test_09_stock_filter_by_medium_risk_only(self):
+    def test_08_stock_filter_by_medium_risk_only(self):
         self.dashboard.open_stock_filter()
         self.dashboard.stock_risk_high.uncheck()
         self.dashboard.stock_risk_medium.check()
         self.dashboard.apply_stock_filters()
 
         self.dashboard.assert_all_stock_risk("Medium")
+
+    def test_09_stock_filter_by_warehouse_and_quantity(self):
+            self.dashboard.open_stock_filter()
+
+            self.page.wait_for_function(
+                "() => document.getElementById('stock-warehouse').options.length > 1",
+                timeout=10000
+            )
+
+            warehouse = (
+                self.dashboard.stock_warehouse
+                .locator("option")
+                .nth(1)
+                .get_attribute("value")
+            )
+
+            self.dashboard.stock_warehouse.select_option(value=warehouse)
+            self.dashboard.stock_qty_min.fill("20")
+            self.dashboard.stock_qty_max.fill("60")
+            self.dashboard.apply_stock_filters()
+
+            self.dashboard.assert_all_stock_from_warehouse(warehouse)
+            self.dashboard.assert_all_stock_qty_between(20, 60)
 
 
 if __name__ == "__main__":
