@@ -185,6 +185,7 @@ class DashboardPage:
             expect(badge).to_contain_text(risk, ignore_case=True)
 
 
+
 # =========================
 # TESTS
 # =========================
