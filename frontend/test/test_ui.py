@@ -8,7 +8,7 @@ from playwright.sync_api import sync_playwright, expect
 # =========================
 
 class DashboardPage:
-    URL = os.getenv("BASE_URL", "http://localhost:8082")
+    URL = os.getenv("BASE_URL", "https://shivery-faucal-nash.ngrok-free.dev")
 
     def __init__(self, page):
         self.page = page
