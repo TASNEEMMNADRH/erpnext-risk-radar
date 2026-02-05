@@ -220,9 +220,12 @@ class TestDashboardFilters(unittest.TestCase):
     def tearDown(self):
         self.dashboard.refresh()
 
+
     # =========================
     # INVOICE TESTS
     # =========================
+
+    
     def test_01_invoice_high_risk_only(self):
         self.dashboard.open_invoice_filter()
         self.dashboard.invoice_risk_medium.uncheck()
@@ -265,9 +268,11 @@ class TestDashboardFilters(unittest.TestCase):
         if total_before > 0:
             self.assertLessEqual(total_after, total_before)
 
+
     # =========================
     # STOCK TESTS
     # =========================
+
     def test_06_stock_filter_by_warehouse(self):
         self.dashboard.open_stock_filter()
         self.page.wait_for_function(
