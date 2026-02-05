@@ -8,7 +8,7 @@ from playwright.sync_api import sync_playwright, expect
 # =========================
 
 class DashboardPage:
-    URL = os.getenv("BASE_URL", "https://shivery-faucal-nash.ngrok-free.dev")
+    URL = os.getenv("BASE_URL", "http://localhost:8082")
 
     def __init__(self, page):
         self.page = page
@@ -27,18 +27,35 @@ class DashboardPage:
     )
 
     def wait_for_invoice_table(self):
-        # 1️⃣ לחכות שה-loading ייעלם
+        try:
+            # חכי שה-page ייטען
+            self.page.wait_for_selector("body", timeout=60000)
+
+            # חכי שהתוכן הראשי יופיע
+            self.page.wait_for_selector("#table-content", timeout=60000)
+
+        except Exception as e:
+            # 📸 Screenshot
+            self.page.screenshot(
+                path="ui_failure.png",
+                full_page=True
+            )
+
+            # 🧾 שמירת HTML (מאוד חשוב!)
+            with open("ui_failure.html", "w", encoding="utf-8") as f:
+                f.write(self.page.content())
+
+            # להכשיל את הטסט עם הודעה ברורה
+            raise AssertionError(
+                "UI did not load correctly in CI. Screenshot and HTML were saved."
+            ) from e
+
+
+        # 2️⃣ לוודא שהתוכן נטען (טבלה או הודעה)
         self.page.wait_for_selector(
-            ".loading",
-            state="hidden",
+            "#table-content",
             timeout=30000
         )
-
-    # 2️⃣ לוודא שהתוכן נטען (טבלה או הודעה)
-        self.page.wait_for_selector(
-        "#table-content",
-        timeout=30000
-    )
 
     def refresh(self):
         self.refresh_button.click()
