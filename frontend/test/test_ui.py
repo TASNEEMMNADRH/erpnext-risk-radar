@@ -224,12 +224,27 @@ class TestDashboardFilters(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.playwright = sync_playwright().start()
-        cls.browser = cls.playwright.chromium.launch(headless=True)
-        cls.context = cls.browser.new_context()
+
+        cls.browser = cls.playwright.chromium.launch(
+            headless=True,
+            args=["--no-sandbox"]
+        )
+
+        cls.context = cls.browser.new_context(
+            extra_http_headers={
+                # ⛔ מדלג על דף האזהרה של ngrok
+                "ngrok-skip-browser-warning": "true"
+            }
+        )
+
         cls.page = cls.context.new_page()
 
         cls.dashboard = DashboardPage(cls.page)
+
+        # פתיחת הדשבורד (עם הנתיב הנכון)
         cls.dashboard.open()
+
+        # המתנה חכמה לטעינת ה-UI
         cls.dashboard.wait_for_invoice_table()
 
     @classmethod
@@ -237,6 +252,7 @@ class TestDashboardFilters(unittest.TestCase):
         cls.context.close()
         cls.browser.close()
         cls.playwright.stop()
+
 
     def tearDown(self):
         self.dashboard.refresh()
