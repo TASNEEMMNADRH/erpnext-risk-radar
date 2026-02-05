@@ -193,7 +193,7 @@ class TestDashboardFilters(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.playwright = sync_playwright().start()
-        cls.browser = cls.playwright.chromium.launch(headless=False)
+        cls.browser = cls.playwright.chromium.launch(headless=True)
         cls.context = cls.browser.new_context()
         cls.page = cls.context.new_page()
 
