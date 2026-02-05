@@ -3,7 +3,6 @@ import re
 import os
 from playwright.sync_api import sync_playwright, expect
 
-
 # =========================
 # Page Object
 # =========================
