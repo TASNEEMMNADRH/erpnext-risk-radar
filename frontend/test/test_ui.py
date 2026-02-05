@@ -21,7 +21,10 @@ class DashboardPage:
         return self.page.locator(".refresh-btn")
 
     def open(self):
-        self.page.goto(self.URL)
+        self.page.goto(
+             f"{self.URL}/static/dashboard.html", wait_until="networkidle",
+ timeout=60000
+    )
 
     def wait_for_invoice_table(self):
         # 1️⃣ לחכות שה-loading ייעלם
