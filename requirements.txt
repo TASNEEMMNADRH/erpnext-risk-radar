@@ -7,5 +7,5 @@ httpx
 pytest
 pytest-cov
 playwright
-
-
+allure-pytest
+pytest-html

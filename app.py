@@ -3,11 +3,16 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from services.erpnext import get_sales_invoices, get_overdue_invoices, get_bin_stock, get_low_stock_items, get_delayed_purchase_orders
 import requests
+import os
+from pathlib import Path
 
 app = FastAPI(title="ERPNext Risk Radar API")
 
 # Mount static files for dashboard
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Use absolute path relative to this file's location
+STATIC_DIR = Path(__file__).parent / "static"
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 @app.get("/")

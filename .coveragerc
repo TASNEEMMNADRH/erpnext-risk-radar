@@ -1,8 +1,8 @@
 [run]
-omit = 
-    dashboard.py
+omit =
     */test/*
     */__pycache__/*
+    */__init__.py
     .venv/*
 
 [report]
@@ -11,4 +11,4 @@ exclude_lines =
     def __repr__
     raise AssertionError
     raise NotImplementedError
-    if __name__ == .__main__.:
+    if __name__ == "__main__":

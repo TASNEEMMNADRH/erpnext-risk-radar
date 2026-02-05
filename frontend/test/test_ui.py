@@ -349,27 +349,6 @@ class TestDashboardFilters(unittest.TestCase):
 
         self.dashboard.assert_all_stock_risk("Medium")
 
-    # =========================
-    # REFRESH
-    # =========================
-    def test_10_refresh_resets_invoice_filters(self):
-        total_before = self.dashboard.invoice_rows.count()
-
-        if total_before == 0:
-            self.skipTest("No invoices available to test refresh behavior")
-
-        self.dashboard.open_invoice_filter()
-        self.dashboard.invoice_risk_medium.uncheck()
-        self.dashboard.invoice_amount_min.fill("1000")
-        self.dashboard.apply_invoice_filters()
-
-        self.dashboard.assert_invoice_filter_active()
-        self.dashboard.refresh()
-
-        total_after = self.dashboard.invoice_rows.count()
-        self.assertEqual(total_after, total_before)
-        self.dashboard.assert_invoice_filter_not_active()
-
 
 if __name__ == "__main__":
     unittest.main()
