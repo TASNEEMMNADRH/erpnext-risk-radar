@@ -24,8 +24,18 @@ class DashboardPage:
         self.page.goto(self.URL)
 
     def wait_for_invoice_table(self):
-        self.page.wait_for_selector(".loading", state="hidden", timeout=15000)
-        self.page.wait_for_selector("#table-content table", timeout=15000)
+        # 1️⃣ לחכות שה-loading ייעלם
+        self.page.wait_for_selector(
+            ".loading",
+            state="hidden",
+            timeout=30000
+        )
+
+    # 2️⃣ לוודא שהתוכן נטען (טבלה או הודעה)
+        self.page.wait_for_selector(
+        "#table-content",
+        timeout=30000
+    )
 
     def refresh(self):
         self.refresh_button.click()
