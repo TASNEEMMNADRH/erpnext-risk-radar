@@ -224,6 +224,173 @@
             font-size: 0.85rem;
             margin-top: 20px;
         }
+
+        /* Filter Styles */
+        .filter-btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .filter-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .filter-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: #1f2937;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            min-width: 300px;
+            display: none;
+        }
+
+        .filter-dropdown.show {
+            display: block;
+        }
+
+        .filter-group {
+            margin-bottom: 15px;
+        }
+
+        .filter-group label {
+            display: block;
+            color: #8892b0;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 8px 12px;
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #fff;
+            cursor: pointer;
+            text-transform: none;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-actions button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .apply-filter-btn {
+            background: #27ae60;
+            color: white;
+        }
+
+        .apply-filter-btn:hover {
+            background: #229954;
+        }
+
+        .clear-filter-btn {
+            background: #e94560;
+            color: white;
+        }
+
+        .clear-filter-btn:hover {
+            background: #c23a51;
+        }
+
+        .filter-container {
+            position: relative;
+        }
+
+        .range-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .range-inputs input {
+            flex: 1;
+        }
+
+        .range-inputs span {
+            color: #8892b0;
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .filter-tag {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-tag .remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -240,7 +407,46 @@
         <div class="table-container" style="margin-bottom: 30px;">
             <div class="table-header">
                 <h2>📋 Overdue Invoices</h2>
+                <div class="filter-container">
+                    <button class="filter-btn" id="invoice-filter-btn" onclick="toggleFilter('invoice')">🔍 Filters</button>
+                    <div class="filter-dropdown" id="invoice-filter-dropdown">
+                        <div class="filter-group">
+                            <label>Overdue Days Range</label>
+                            <div class="range-inputs">
+                                <input type="number" id="invoice-days-min" placeholder="Min" value="">
+                                <span>-</span>
+                                <input type="number" id="invoice-days-max" placeholder="Max" value="">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Risk Level</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="invoice-risk-high" checked> High</label>
+                                <label><input type="checkbox" id="invoice-risk-medium" checked> Medium</label>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Invoice Amount Range (₪)</label>
+                            <div class="range-inputs">
+                                <input type="number" id="invoice-amount-min" placeholder="Min" value="">
+                                <span>-</span>
+                                <input type="number" id="invoice-amount-max" placeholder="Max" value="">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Customer Name</label>
+                            <select id="invoice-customer">
+                                <option value="">All Customers</option>
+                            </select>
+                        </div>
+                        <div class="filter-actions">
+                            <button class="apply-filter-btn" onclick="applyInvoiceFilters()">Apply</button>
+                            <button class="clear-filter-btn" onclick="clearInvoiceFilters()">Clear</button>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div id="invoice-active-filters" class="active-filters"></div>
             <div id="table-content">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -253,7 +459,38 @@
         <div class="table-container" style="margin-bottom: 30px;">
             <div class="table-header">
                 <h2>📦 Low Stock Risk</h2>
+                <div class="filter-container">
+                    <button class="filter-btn" id="stock-filter-btn" onclick="toggleFilter('stock')">🔍 Filters</button>
+                    <div class="filter-dropdown" id="stock-filter-dropdown">
+                        <div class="filter-group">
+                            <label>Risk Level</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="stock-risk-high" checked> High</label>
+                                <label><input type="checkbox" id="stock-risk-medium" checked> Medium</label>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Warehouse</label>
+                            <select id="stock-warehouse">
+                                <option value="">All Warehouses</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Actual Quantity Range</label>
+                            <div class="range-inputs">
+                                <input type="number" id="stock-qty-min" placeholder="Min" value="">
+                                <span>-</span>
+                                <input type="number" id="stock-qty-max" placeholder="Max" value="">
+                            </div>
+                        </div>
+                        <div class="filter-actions">
+                            <button class="apply-filter-btn" onclick="applyStockFilters()">Apply</button>
+                            <button class="clear-filter-btn" onclick="clearStockFilters()">Clear</button>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div id="stock-active-filters" class="active-filters"></div>
             <div id="stock-table-content">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -266,7 +503,45 @@
         <div class="table-container">
             <div class="table-header">
                 <h2>🚚 Delayed Purchase Orders (No Receipt)</h2>
+                <div class="filter-container">
+                    <button class="filter-btn" id="po-filter-btn" onclick="toggleFilter('po')">🔍 Filters</button>
+                    <div class="filter-dropdown" id="po-filter-dropdown">
+                        <div class="filter-group">
+                            <label>Stuck Days</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="po-days-medium" checked> 7-14 days</label>
+                                <label><input type="checkbox" id="po-days-high" checked> > 14 days</label>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Risk Level</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="po-risk-high" checked> High</label>
+                                <label><input type="checkbox" id="po-risk-medium" checked> Medium</label>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Order Value Range (₪)</label>
+                            <div class="range-inputs">
+                                <input type="number" id="po-value-min" placeholder="Min" value="">
+                                <span>-</span>
+                                <input type="number" id="po-value-max" placeholder="Max" value="">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Supplier Name</label>
+                            <select id="po-supplier">
+                                <option value="">All Suppliers</option>
+                            </select>
+                        </div>
+                        <div class="filter-actions">
+                            <button class="apply-filter-btn" onclick="applyPOFilters()">Apply</button>
+                            <button class="clear-filter-btn" onclick="clearPOFilters()">Clear</button>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div id="po-active-filters" class="active-filters"></div>
             <div id="po-table-content">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -279,8 +554,465 @@
     </div>
     
     <script>
-        // Refresh all data
+        // Global data storage for filtering
+        let allInvoices = [];
+        let allStockItems = [];
+        let allPOs = [];
+        
+        // Invoice filters state
+        let invoiceFilters = {
+            daysMin: null,
+            daysMax: null,
+            riskHigh: true,
+            riskMedium: true,
+            amountMin: null,
+            amountMax: null,
+            customer: ''
+        };
+
+        // Stock filters state
+        let stockFilters = {
+            riskHigh: true,
+            riskMedium: true,
+            warehouse: '',
+            qtyMin: null,
+            qtyMax: null
+        };
+
+        // PO filters state
+        let poFilters = {
+            daysMedium: true,
+            daysHigh: true,
+            riskHigh: true,
+            riskMedium: true,
+            valueMin: null,
+            valueMax: null,
+            supplier: ''
+        };
+
+        // Toggle filter dropdown
+        function toggleFilter(type) {
+            const dropdown = document.getElementById(`${type}-filter-dropdown`);
+            const allDropdowns = document.querySelectorAll('.filter-dropdown');
+            
+            // Close other dropdowns
+            allDropdowns.forEach(d => {
+                if (d.id !== `${type}-filter-dropdown`) {
+                    d.classList.remove('show');
+                }
+            });
+            
+            dropdown.classList.toggle('show');
+        }
+
+        // Populate customer dropdown
+        function populateCustomerDropdown() {
+            const select = document.getElementById('invoice-customer');
+            const customers = [...new Set(allInvoices.map(inv => inv.customer).filter(c => c))].sort();
+            
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">All Customers</option>';
+            customers.forEach(customer => {
+                const option = document.createElement('option');
+                option.value = customer;
+                option.textContent = customer;
+                select.appendChild(option);
+            });
+            select.value = currentValue;
+        }
+
+        // Populate warehouse dropdown
+        function populateWarehouseDropdown() {
+            const select = document.getElementById('stock-warehouse');
+            const warehouses = [...new Set(allStockItems.map(item => item.warehouse).filter(w => w))].sort();
+            
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">All Warehouses</option>';
+            warehouses.forEach(warehouse => {
+                const option = document.createElement('option');
+                option.value = warehouse;
+                option.textContent = warehouse;
+                select.appendChild(option);
+            });
+            select.value = currentValue;
+        }
+
+        // Populate supplier dropdown
+        function populateSupplierDropdown() {
+            const select = document.getElementById('po-supplier');
+            const suppliers = [...new Set(allPOs.map(po => po.supplier).filter(s => s))].sort();
+            
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">All Suppliers</option>';
+            suppliers.forEach(supplier => {
+                const option = document.createElement('option');
+                option.value = supplier;
+                option.textContent = supplier;
+                select.appendChild(option);
+            });
+            select.value = currentValue;
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.filter-container')) {
+                document.querySelectorAll('.filter-dropdown').forEach(d => {
+                    d.classList.remove('show');
+                });
+            }
+        });
+
+        // Apply Invoice Filters
+        function applyInvoiceFilters() {
+            invoiceFilters = {
+                daysMin: parseFloat(document.getElementById('invoice-days-min').value) || null,
+                daysMax: parseFloat(document.getElementById('invoice-days-max').value) || null,
+                riskHigh: document.getElementById('invoice-risk-high').checked,
+                riskMedium: document.getElementById('invoice-risk-medium').checked,
+                amountMin: parseFloat(document.getElementById('invoice-amount-min').value) || null,
+                amountMax: parseFloat(document.getElementById('invoice-amount-max').value) || null,
+                customer: document.getElementById('invoice-customer').value
+            };
+
+            updateInvoiceFilterTags();
+            filterAndDisplayInvoices();
+            toggleFilter('invoice');
+            updateFilterButtonState('invoice');
+        }
+
+        // Clear Invoice Filters
+        function clearInvoiceFilters() {
+            document.getElementById('invoice-days-min').value = '';
+            document.getElementById('invoice-days-max').value = '';
+            document.getElementById('invoice-risk-high').checked = true;
+            document.getElementById('invoice-risk-medium').checked = true;
+            document.getElementById('invoice-amount-min').value = '';
+            document.getElementById('invoice-amount-max').value = '';
+            document.getElementById('invoice-customer').value = '';
+            
+            invoiceFilters = {
+                daysMin: null,
+                daysMax: null,
+                riskHigh: true,
+                riskMedium: true,
+                amountMin: null,
+                amountMax: null,
+                customer: ''
+            };
+
+            updateInvoiceFilterTags();
+            filterAndDisplayInvoices();
+            updateFilterButtonState('invoice');
+        }
+
+        // Filter and display invoices
+        function filterAndDisplayInvoices() {
+            let filtered = allInvoices.filter(inv => {
+                // Risk level filter
+                const riskLevel = (inv.risk_level || '').toLowerCase();
+                if (riskLevel === 'high' && !invoiceFilters.riskHigh) return false;
+                if (riskLevel === 'medium' && !invoiceFilters.riskMedium) return false;
+
+                // Days overdue filter
+                const days = inv.days_overdue || 0;
+                if (invoiceFilters.daysMin !== null && days < invoiceFilters.daysMin) return false;
+                if (invoiceFilters.daysMax !== null && days > invoiceFilters.daysMax) return false;
+
+                // Amount filter
+                const amount = inv.outstanding_amount || 0;
+                if (invoiceFilters.amountMin !== null && amount < invoiceFilters.amountMin) return false;
+                if (invoiceFilters.amountMax !== null && amount > invoiceFilters.amountMax) return false;
+
+                // Customer filter
+                if (invoiceFilters.customer && inv.customer !== invoiceFilters.customer) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            updateTable(filtered);
+        }
+
+        // Update invoice filter tags
+        function updateInvoiceFilterTags() {
+            const container = document.getElementById('invoice-active-filters');
+            const tags = [];
+
+            if (invoiceFilters.daysMin !== null || invoiceFilters.daysMax !== null) {
+                const min = invoiceFilters.daysMin !== null ? invoiceFilters.daysMin : '0';
+                const max = invoiceFilters.daysMax !== null ? invoiceFilters.daysMax : '∞';
+                tags.push(`Days: ${min}-${max}`);
+            }
+
+            if (!invoiceFilters.riskHigh || !invoiceFilters.riskMedium) {
+                const risks = [];
+                if (invoiceFilters.riskHigh) risks.push('High');
+                if (invoiceFilters.riskMedium) risks.push('Medium');
+                tags.push(`Risk: ${risks.join(', ') || 'None'}`);
+            }
+
+            if (invoiceFilters.amountMin !== null || invoiceFilters.amountMax !== null) {
+                const min = invoiceFilters.amountMin !== null ? '₪' + invoiceFilters.amountMin : '₪0';
+                const max = invoiceFilters.amountMax !== null ? '₪' + invoiceFilters.amountMax : '∞';
+                tags.push(`Amount: ${min}-${max}`);
+            }
+
+            if (invoiceFilters.customer) {
+                tags.push(`Customer: ${invoiceFilters.customer}`);
+            }
+
+            container.innerHTML = tags.map(tag => 
+                `<div class="filter-tag">${tag}</div>`
+            ).join('');
+        }
+
+        // Apply Stock Filters
+        function applyStockFilters() {
+            stockFilters = {
+                riskHigh: document.getElementById('stock-risk-high').checked,
+                riskMedium: document.getElementById('stock-risk-medium').checked,
+                warehouse: document.getElementById('stock-warehouse').value,
+                qtyMin: parseFloat(document.getElementById('stock-qty-min').value) || null,
+                qtyMax: parseFloat(document.getElementById('stock-qty-max').value) || null
+            };
+
+            updateStockFilterTags();
+            filterAndDisplayStock();
+            toggleFilter('stock');
+            updateFilterButtonState('stock');
+        }
+
+        // Clear Stock Filters
+        function clearStockFilters() {
+            document.getElementById('stock-risk-high').checked = true;
+            document.getElementById('stock-risk-medium').checked = true;
+            document.getElementById('stock-warehouse').value = '';
+            document.getElementById('stock-qty-min').value = '';
+            document.getElementById('stock-qty-max').value = '';
+            
+            stockFilters = {
+                riskHigh: true,
+                riskMedium: true,
+                warehouse: '',
+                qtyMin: null,
+                qtyMax: null
+            };
+
+            updateStockFilterTags();
+            filterAndDisplayStock();
+            updateFilterButtonState('stock');
+        }
+
+        // Filter and display stock items
+        function filterAndDisplayStock() {
+            let filtered = allStockItems.filter(item => {
+                // Risk level filter
+                const riskLevel = (item.risk_level || '').toLowerCase();
+                if (riskLevel === 'high' && !stockFilters.riskHigh) return false;
+                if (riskLevel === 'medium' && !stockFilters.riskMedium) return false;
+
+                // Warehouse filter
+                if (stockFilters.warehouse && item.warehouse !== stockFilters.warehouse) {
+                    return false;
+                }
+
+                // Quantity filter
+                const qty = item.actual_qty || 0;
+                if (stockFilters.qtyMin !== null && qty < stockFilters.qtyMin) return false;
+                if (stockFilters.qtyMax !== null && qty > stockFilters.qtyMax) return false;
+
+                return true;
+            });
+
+            // Recalculate counts
+            const result = {
+                data: filtered,
+                count: filtered.length,
+                high_count: filtered.filter(i => (i.risk_level || '').toLowerCase() === 'high').length,
+                medium_count: filtered.filter(i => (i.risk_level || '').toLowerCase() === 'medium').length
+            };
+
+            updateStockTable(result);
+        }
+
+        // Update stock filter tags
+        function updateStockFilterTags() {
+            const container = document.getElementById('stock-active-filters');
+            const tags = [];
+
+            if (!stockFilters.riskHigh || !stockFilters.riskMedium) {
+                const risks = [];
+                if (stockFilters.riskHigh) risks.push('High');
+                if (stockFilters.riskMedium) risks.push('Medium');
+                tags.push(`Risk: ${risks.join(', ') || 'None'}`);
+            }
+
+            if (stockFilters.warehouse) {
+                tags.push(`Warehouse: ${stockFilters.warehouse}`);
+            }
+
+            if (stockFilters.qtyMin !== null || stockFilters.qtyMax !== null) {
+                const min = stockFilters.qtyMin !== null ? stockFilters.qtyMin : '0';
+                const max = stockFilters.qtyMax !== null ? stockFilters.qtyMax : '∞';
+                tags.push(`Qty: ${min}-${max}`);
+            }
+
+            container.innerHTML = tags.map(tag => 
+                `<div class="filter-tag">${tag}</div>`
+            ).join('');
+        }
+
+        // Apply PO Filters
+        function applyPOFilters() {
+            poFilters = {
+                daysMedium: document.getElementById('po-days-medium').checked,
+                daysHigh: document.getElementById('po-days-high').checked,
+                riskHigh: document.getElementById('po-risk-high').checked,
+                riskMedium: document.getElementById('po-risk-medium').checked,
+                valueMin: parseFloat(document.getElementById('po-value-min').value) || null,
+                valueMax: parseFloat(document.getElementById('po-value-max').value) || null,
+                supplier: document.getElementById('po-supplier').value
+            };
+
+            updatePOFilterTags();
+            filterAndDisplayPO();
+            toggleFilter('po');
+            updateFilterButtonState('po');
+        }
+
+        // Clear PO Filters
+        function clearPOFilters() {
+            document.getElementById('po-days-medium').checked = true;
+            document.getElementById('po-days-high').checked = true;
+            document.getElementById('po-risk-high').checked = true;
+            document.getElementById('po-risk-medium').checked = true;
+            document.getElementById('po-value-min').value = '';
+            document.getElementById('po-value-max').value = '';
+            document.getElementById('po-supplier').value = '';
+            
+            poFilters = {
+                daysMedium: true,
+                daysHigh: true,
+                riskHigh: true,
+                riskMedium: true,
+                valueMin: null,
+                valueMax: null,
+                supplier: ''
+            };
+
+            updatePOFilterTags();
+            filterAndDisplayPO();
+            updateFilterButtonState('po');
+        }
+
+        // Filter and display POs
+        function filterAndDisplayPO() {
+            let filtered = allPOs.filter(po => {
+                // Stuck days filter
+                const days = po.stuck_days || 0;
+                if (days >= 7 && days <= 14 && !poFilters.daysMedium) return false;
+                if (days > 14 && !poFilters.daysHigh) return false;
+
+                // Risk level filter
+                const riskLevel = (po.risk_level || '').toLowerCase();
+                if (riskLevel === 'high' && !poFilters.riskHigh) return false;
+                if (riskLevel === 'medium' && !poFilters.riskMedium) return false;
+
+                // Order value filter
+                const value = po.grand_total || 0;
+                if (poFilters.valueMin !== null && value < poFilters.valueMin) return false;
+                if (poFilters.valueMax !== null && value > poFilters.valueMax) return false;
+
+                // Supplier filter
+                if (poFilters.supplier && po.supplier !== poFilters.supplier) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            // Recalculate counts
+            const result = {
+                data: filtered,
+                count: filtered.length,
+                high_count: filtered.filter(p => (p.risk_level || '').toLowerCase() === 'high').length,
+                medium_count: filtered.filter(p => (p.risk_level || '').toLowerCase() === 'medium').length
+            };
+
+            updateDelayedPOTable(result);
+        }
+
+        // Update PO filter tags
+        function updatePOFilterTags() {
+            const container = document.getElementById('po-active-filters');
+            const tags = [];
+
+            if (!poFilters.daysMedium || !poFilters.daysHigh) {
+                const days = [];
+                if (poFilters.daysMedium) days.push('7-14');
+                if (poFilters.daysHigh) days.push('>14');
+                tags.push(`Days: ${days.join(', ') || 'None'}`);
+            }
+
+            if (!poFilters.riskHigh || !poFilters.riskMedium) {
+                const risks = [];
+                if (poFilters.riskHigh) risks.push('High');
+                if (poFilters.riskMedium) risks.push('Medium');
+                tags.push(`Risk: ${risks.join(', ') || 'None'}`);
+            }
+
+            if (poFilters.valueMin !== null || poFilters.valueMax !== null) {
+                const min = poFilters.valueMin !== null ? '₪' + poFilters.valueMin : '₪0';
+                const max = poFilters.valueMax !== null ? '₪' + poFilters.valueMax : '∞';
+                tags.push(`Value: ${min}-${max}`);
+            }
+
+            if (poFilters.supplier) {
+                tags.push(`Supplier: ${poFilters.supplier}`);
+            }
+
+            container.innerHTML = tags.map(tag => 
+                `<div class="filter-tag">${tag}</div>`
+            ).join('');
+        }
+
+        // Update filter button state
+        function updateFilterButtonState(type) {
+            const btn = document.getElementById(`${type}-filter-btn`);
+            let isFiltered = false;
+
+            if (type === 'invoice') {
+                isFiltered = invoiceFilters.daysMin !== null || invoiceFilters.daysMax !== null ||
+                            !invoiceFilters.riskHigh || !invoiceFilters.riskMedium ||
+                            invoiceFilters.amountMin !== null || invoiceFilters.amountMax !== null ||
+                            invoiceFilters.customer !== '';
+            } else if (type === 'stock') {
+                isFiltered = !stockFilters.riskHigh || !stockFilters.riskMedium ||
+                            stockFilters.warehouse !== '' ||
+                            stockFilters.qtyMin !== null || stockFilters.qtyMax !== null;
+            } else if (type === 'po') {
+                isFiltered = !poFilters.daysMedium || !poFilters.daysHigh ||
+                            !poFilters.riskHigh || !poFilters.riskMedium ||
+                            poFilters.valueMin !== null || poFilters.valueMax !== null ||
+                            poFilters.supplier !== '';
+            }
+
+            if (isFiltered) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+
+        // Refresh all data and reset filters
         function refreshAll() {
+            // Reset all filters
+            clearInvoiceFilters();
+            clearStockFilters();
+            clearPOFilters();
+            
+            // Reload data
             loadData();
             loadStockData();
             loadDelayedPOData();
@@ -296,21 +1028,30 @@
             `;
             
             try {
+                console.log('Fetching invoices from /invoices/overdue...');
                 const response = await fetch('/invoices/overdue?limit=100');
+                console.log('Invoice response status:', response.status);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
+                console.log('Invoice data received:', data.data?.length, 'invoices');
                 
-                // Update table
-                updateTable(data.data || []);
+                // Store all data
+                allInvoices = data.data || [];
+                
+                // Populate customer dropdown
+                populateCustomerDropdown();
+                
+                // Apply filters and update
+                filterAndDisplayInvoices();
                 
                 // Update last updated time
                 document.getElementById('last-updated').textContent = 
                     `Last updated: ${new Date().toLocaleString()}`;
                     
             } catch (error) {
-                console.error('Error loading data:', error);
+                console.error('Error loading invoice data:', error);
                 tableContent.innerHTML = `
                     <div class="error-message">
                         <h3>⚠️ Error Loading Data</h3>
@@ -327,12 +1068,30 @@
             const tableContent = document.getElementById('table-content');
             
             if (invoices.length === 0) {
-                tableContent.innerHTML = `
-                    <div style="text-align: center; padding: 50px; color: #27ae60;">
-                        <h3>✅ No Overdue Invoices</h3>
-                        <p>All invoices are paid on time!</p>
-                    </div>
-                `;
+                // Check if we have original data but filters excluded everything
+                const hasFilters = invoiceFilters.daysMin !== null || invoiceFilters.daysMax !== null ||
+                                  !invoiceFilters.riskHigh || !invoiceFilters.riskMedium ||
+                                  invoiceFilters.amountMin !== null || invoiceFilters.amountMax !== null ||
+                                  invoiceFilters.customer !== '';
+                
+                if (hasFilters && allInvoices.length > 0) {
+                    tableContent.innerHTML = `
+                        <div style="text-align: center; padding: 50px; color: #f39c12;">
+                            <h3>🔍 No Matching Results</h3>
+                            <p>No invoices match the current filters. Try adjusting your filter criteria.</p>
+                            <p style="margin-top: 10px; font-size: 0.9rem; color: #8892b0;">
+                                Total invoices: ${allInvoices.length}
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    tableContent.innerHTML = `
+                        <div style="text-align: center; padding: 50px; color: #27ae60;">
+                            <h3>✅ No Overdue Invoices</h3>
+                            <p>All invoices are paid on time!</p>
+                        </div>
+                    `;
+                }
                 return;
             }
             
@@ -370,12 +1129,6 @@
             tableContent.innerHTML = tableHTML;
         }
         
-        // Load data on page load
-        refreshAll();
-        
-        // Auto-refresh every 5 minutes
-        setInterval(refreshAll, 5 * 60 * 1000);
-
         async function loadStockData() {
             const stockTableContent = document.getElementById('stock-table-content');
             stockTableContent.innerHTML = `
@@ -386,14 +1139,23 @@
             `;
             
             try {
+                console.log('Fetching stock from /inventory/low-stock...');
                 const response = await fetch('/inventory/low-stock?limit=100');
+                console.log('Stock response status:', response.status);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const result = await response.json();
+                console.log('Stock data received:', result.data?.length, 'items');
                 
-                // Update stock table - result has count, high_count, medium_count, data
-                updateStockTable(result);
+                // Store all data
+                allStockItems = result.data || [];
+                
+                // Populate warehouse dropdown
+                populateWarehouseDropdown();
+                
+                // Apply filters and update
+                filterAndDisplayStock();
                     
             } catch (error) {
                 console.error('Error loading stock data:', error);
@@ -411,12 +1173,29 @@
             const items = result.data || [];
             
             if (!items || items.length === 0) {
-                stockTableContent.innerHTML = `
-                    <div style="text-align: center; padding: 50px; color: #27ae60;">
-                        <h3>✅ All Stock Levels OK</h3>
-                        <p>No items with low stock!</p>
-                    </div>
-                `;
+                // Check if we have original data but filters excluded everything
+                const hasFilters = !stockFilters.riskHigh || !stockFilters.riskMedium ||
+                                  stockFilters.warehouse !== '' ||
+                                  stockFilters.qtyMin !== null || stockFilters.qtyMax !== null;
+                
+                if (hasFilters && allStockItems.length > 0) {
+                    stockTableContent.innerHTML = `
+                        <div style="text-align: center; padding: 50px; color: #f39c12;">
+                            <h3>🔍 No Matching Results</h3>
+                            <p>No stock items match the current filters. Try adjusting your filter criteria.</p>
+                            <p style="margin-top: 10px; font-size: 0.9rem; color: #8892b0;">
+                                Total items: ${allStockItems.length}
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    stockTableContent.innerHTML = `
+                        <div style="text-align: center; padding: 50px; color: #27ae60;">
+                            <h3>✅ All Stock Levels OK</h3>
+                            <p>No items with low stock!</p>
+                        </div>
+                    `;
+                }
                 return;
             }
 
@@ -473,12 +1252,23 @@
             `;
             
             try {
+                console.log('Fetching POs from /purchase-orders/delayed...');
                 const response = await fetch('/purchase-orders/delayed?limit=100');
+                console.log('PO response status:', response.status);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const result = await response.json();
-                updateDelayedPOTable(result);
+                console.log('PO data received:', result.data?.length, 'POs');
+                
+                // Store all data
+                allPOs = result.data || [];
+                
+                // Populate supplier dropdown
+                populateSupplierDropdown();
+                
+                // Apply filters and update
+                filterAndDisplayPO();
                     
             } catch (error) {
                 console.error('Error loading delayed PO data:', error);
@@ -496,12 +1286,30 @@
             const items = result.data || [];
             
             if (!items || items.length === 0) {
-                poTableContent.innerHTML = `
-                    <div style="text-align: center; padding: 50px; color: #27ae60;">
-                        <h3>✅ No Delayed Purchase Orders</h3>
-                        <p>All POs are received on time!</p>
-                    </div>
-                `;
+                // Check if we have original data but filters excluded everything
+                const hasFilters = !poFilters.daysMedium || !poFilters.daysHigh ||
+                                  !poFilters.riskHigh || !poFilters.riskMedium ||
+                                  poFilters.valueMin !== null || poFilters.valueMax !== null ||
+                                  poFilters.supplier !== '';
+                
+                if (hasFilters && allPOs.length > 0) {
+                    poTableContent.innerHTML = `
+                        <div style="text-align: center; padding: 50px; color: #f39c12;">
+                            <h3>🔍 No Matching Results</h3>
+                            <p>No purchase orders match the current filters. Try adjusting your filter criteria.</p>
+                            <p style="margin-top: 10px; font-size: 0.9rem; color: #8892b0;">
+                                Total POs: ${allPOs.length}
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    poTableContent.innerHTML = `
+                        <div style="text-align: center; padding: 50px; color: #27ae60;">
+                            <h3>✅ No Delayed Purchase Orders</h3>
+                            <p>All POs are received on time!</p>
+                        </div>
+                    `;
+                }
                 return;
             }
 
@@ -549,6 +1357,13 @@
             
             poTableContent.innerHTML = tableHTML;
         }
+
+        // Load data on page load
+        console.log('Starting initial data load...');
+        refreshAll();
+        
+        // Auto-refresh every 5 minutes
+        setInterval(refreshAll, 5 * 60 * 1000);
     </script>
 </body>
 </html>

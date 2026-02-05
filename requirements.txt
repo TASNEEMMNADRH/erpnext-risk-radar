@@ -6,3 +6,6 @@ coverage
 httpx
 pytest
 pytest-cov
+playwright
+
+
