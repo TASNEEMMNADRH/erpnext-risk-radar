@@ -30,9 +30,11 @@ jobs:
 
       - name: Run API tests + coverage
         run: |
-          coverage run -m unittest discover -s backend/test -p "test_*.py"
-          coverage xml
-          coverage report -m
+          # coverage run -m unittest discover -s backend/test -p "test_*.py"
+          # coverage xml
+          # coverage report -m
+          pytest backend/test 
+
 
       # ✅ Codecov upload
       - name: Upload coverage to Codecov
