@@ -21,6 +21,7 @@ def get_headers():
 
 
 def get_sales_invoices(limit: int = 50):
+    
     """
     Fetch Sales Invoices from ERPNext.
     
@@ -293,15 +294,18 @@ def get_low_stock_items(
     item_code: str = None
 ):
     """
-    Fetch low stock items from Bin for Finished Goods - SD and Stores - SD warehouses.
+Fetch low stock items from Bin ONLY for:
+- Finished Goods - SD
+- Stores - SD
 
-    Risk levels:
-    - High: actual_qty < 30
-    - Medium: 30 <= actual_qty < 60
-    - Ignored: actual_qty >= 60
+Risk levels:
+- High: actual_qty < 30 
+- Medium: 30 <= actual_qty <= 60
+- Ignored: actual_qty > 60
 
-    Returns:
-      Only Medium/High risk items, sorted by actual_qty ascending.
+Returns:
+  Only Medium/High risk items, sorted by actual_qty ascending,
+  filtered to warehouses: Finished Goods - SD and Stores - SD.
     """
     if not ERP_URL:
         raise ValueError("Missing ERP_URL in .env")
@@ -354,15 +358,17 @@ def get_low_stock_items(
     for entry in raw_data:
         qty = entry.get("actual_qty", 0) or 0
 
-        # Risk classification based on actual_qty
-        if qty < 30:
+        # High for 0 <= qty < 30
+        if   0<= qty <=29 :
             risk_level = "High"
             high_count += 1
-        elif 30 <= qty < 60:
+
+        # Medium for 30 <= qty <= 60
+        elif 30 <= qty <= 60:
             risk_level = "Medium"
             medium_count += 1
         else:
-            # Ignore qty >= 60
+            # Ignore qty > 60
             continue
 
         result.append({

@@ -2,3 +2,10 @@ fastapi
 uvicorn
 requests
 python-dotenv
+coverage 
+httpx
+pytest
+pytest-cov
+playwright
+allure-pytest
+pytest-html
